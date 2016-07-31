@@ -20,6 +20,7 @@ function addClicked(){
     console.log("add button clicked");
     addStudent();
     updateData();
+    clearAddStudentForm();
 }
 /**
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
@@ -48,7 +49,7 @@ function clearAddStudentForm(){
     studentName.val('');
     course.val('');
     studentGrade.val('');
-    console.log("cancel add button activated");
+    console.log("data in the form removed");
 }
 /**
  * calculateAverage - loop through the global student array and calculate average grade and return that value
@@ -115,7 +116,7 @@ function reset(){
  * Listen for the document to load and reset the data to the initial state
  */
 $(document).ready(function(){
-        initialize()
+        initialize();
 });
 function initialize(){
     reset();
