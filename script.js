@@ -19,6 +19,7 @@ var studentGrade = null;
 function addClicked(){
     console.log("add button clicked");
     addStudent();
+    updateData();
 }
 /**
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
@@ -70,7 +71,7 @@ function calculateAverage (){
 /**
  * updateData - centralized function to update the average and call student list update
  */
-function updateData (){
+function updateData(){
     calculateAverage();
     updateStudentList();
 }
@@ -112,8 +113,13 @@ function reset(){
  * Listen for the document to load and reset the data to the initial state
  */
 $(document).ready(function(){
+        initialize()
+});
+//need to be able to delete student array, need to be able to update and append newly calculated avg whenever there is a change in student_array
+function initialize(){
+    reset();
     studentName = $('#studentName');
     course = $('#course');
     studentGrade = $('#studentGrade');
-})
-//need to be able to delete student array, need to be able to update and append newly calculated avg whenever there is a change in student_array
+    updateStudentList();
+}
