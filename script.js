@@ -92,17 +92,16 @@ function updateStudentList(){
  * @param studentObj
  */
 function addStudentToDom(studentObject){
-    var studentName = studentObject.name;
-    var studentCourse = studentObject.course;
-    var studentGrade = studentObject.grade;
-    var tdName = $('<td>').text(studentName);
-    var tdCourse = $('<td>').text(studentCourse);
-    var tdGrade = $('<td>').text(studentGrade);
+    var tdName = $('<td>').text(studentObject.name);
+    var tdCourse = $('<td>').text(studentObject.course);
+    var tdGrade = $('<td>').text(studentObject.grade);
     var tdDel = $('<td>').html('<button class="btn btn-danger btn-xs">Delete</button>');
-    var trHandler = $('<tr>').on('click','button',function(){
-        console.log('hello');//make sure to target 'button' instead of tdDel, this will target td.
+    var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdDel).on('click','button',function(){
+        var dataRow = $(this).parents('tr');
+        dataRow.remove();
+        student_array.splice(dataRow.index(),1);
+        console.log(student_array);
     });
-    var tr = trHandler.append(tdName,tdCourse,tdGrade,tdDel);
     $('tbody').append(tr);
 }
 /**
