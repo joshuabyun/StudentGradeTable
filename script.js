@@ -62,11 +62,12 @@ function calculateAverage (){
     }
     else{
         for(var i = 0 ; i < student_array.length ; i++){
-            gradeTotal += student_array[i];
+            gradeTotal += parseFloat(student_array[i].grade);
         }
-        studentAvg = gradeTotal/(student_array.length - 1);
+        studentAvg = gradeTotal/(student_array.length);
+        studentAvg = studentAvg.toFixed(2);
     }
-    return studentAvg;
+    $('.avgGrade').text(studentAvg);
 }
 /**
  * updateData - centralized function to update the average and call student list update
@@ -116,7 +117,6 @@ function reset(){
 $(document).ready(function(){
         initialize()
 });
-//need to be able to delete student array, need to be able to update and append newly calculated avg whenever there is a change in student_array
 function initialize(){
     reset();
     studentName = $('#studentName');
