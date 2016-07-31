@@ -79,6 +79,7 @@ function updateData(){
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
 function updateStudentList(){
+    $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
     for(var i = 0; i < student_array.length; i++){
         addStudentToDom(student_array[i]);
     }
