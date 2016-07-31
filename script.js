@@ -99,7 +99,10 @@ function addStudentToDom(studentObject){
     var tdCourse = $('<td>').text(studentCourse);
     var tdGrade = $('<td>').text(studentGrade);
     var tdDel = $('<td>').html('<button class="btn btn-danger btn-xs">Delete</button>');
-    var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdDel);
+    var trHandler = $('<tr>').on('click','button',function(){
+        console.log('hello');//make sure to target 'button' instead of tdDel, this will target td.
+    });
+    var tr = trHandler.append(tdName,tdCourse,tdGrade,tdDel);
     $('tbody').append(tr);
 }
 /**
