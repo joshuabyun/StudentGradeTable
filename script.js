@@ -97,12 +97,15 @@ function addStudentToDom(studentObject){
     var tdGrade = $('<td>').text(studentObject.grade);
     var tdDel = $('<td>').html('<button class="btn btn-danger btn-xs">Delete</button>');
     var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdDel).on('click','button',function(){
-        var dataRow = $(this).parents('tr');
-        dataRow.remove();
-        student_array.splice(dataRow.index(),1);
-        console.log(student_array);
+        removeStudent($(this));
     });
     $('tbody').append(tr);
+}
+function removeStudent(delBtn){
+    var dataRow = delBtn.parents('tr');
+    student_array.splice(dataRow.index(),1);
+    dataRow.remove();
+    console.log("remaining objects inside student_array : ", student_array);
 }
 /**
  * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
@@ -113,7 +116,6 @@ function reset(){
     course = null;
     studentGrade = null;
 }
-
 /**
  * Listen for the document to load and reset the data to the initial state
  */
