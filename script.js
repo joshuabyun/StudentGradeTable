@@ -18,9 +18,9 @@ var studentGrade = null;
  */
 function addClicked(){
     console.log("add button clicked");
-    addStudent();
-    updateData();
-    clearAddStudentForm();
+    addStudent(); //create an object based on form info and push it to the student_array
+    updateData(); //calculate_avg and create dom via updateStudentList
+    clearAddStudentForm();//clear form
 }
 /**
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
@@ -28,6 +28,12 @@ function addClicked(){
 function cancelClicked(){
     console.log("cancel button clicked");
     clearAddStudentForm();
+}
+function updateStudentList(){
+    $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
+    for(var i = 0; i < student_array.length; i++){
+        addStudentToDom(student_array[i]);
+    }
 }
 function getDataBtnClicked(){
     $.ajax({
@@ -37,15 +43,14 @@ function getDataBtnClicked(){
         method:'post',
         success:function(response){
             if(response.success){
-                $('tbody > tr').remove();
-                reset();
+                reset();//clear current student_Array
                 var serverDataArray = response.data;
                 for(var i = 0;i<serverDataArray.length;i++){
                     var studentObj = serverDataArray[i];
                     student_array.push(studentObj);
-                    addStudentToDom(studentObj);
                 }
-                console.log("ajax call successful, student_array : ",student_array);
+                updateData();//updates both table and avg in the dom
+                console.log("ajax call successful");
             }
             else{
                 console.log("unsuccessful");
@@ -104,12 +109,7 @@ function updateData(){
 /**
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
-function updateStudentList(){
-    $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
-    for(var i = 0; i < student_array.length; i++){
-        addStudentToDom(student_array[i]);
-    }
-}
+
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements
  * into the .student_list tbody
@@ -136,9 +136,6 @@ function removeStudent(delBtn){
  */
 function reset(){
     student_array = [];
-    studentName = null;
-    course = null;
-    studentGrade = null;
 }
 /**
  * Listen for the document to load and reset the data to the initial state
@@ -151,5 +148,5 @@ function initialize(){
     studentName = $('#studentName');
     course = $('#course');
     studentGrade = $('#studentGrade');
-    updateStudentList();
+    getDataBtnClicked();
 }
