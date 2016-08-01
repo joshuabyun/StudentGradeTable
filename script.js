@@ -21,6 +21,30 @@ function addClicked(){
     addStudent(); //create an object based on form info and push it to the student_array
     updateData(); //calculate_avg and create dom via updateStudentList
     clearAddStudentForm();//clear form
+    sendDataToServer();
+}
+function sendDataToServer (){
+    console.log("sendDataToServer");
+    var newObjPosition = student_array[student_array.length -1];
+    $.ajax({
+        url:'http://s-apis.learningfuze.com/sgt/create',
+        dataType:'json',
+        data:{
+            api_key:'aEY4CgfQHB',
+            name:newObjPosition.name,
+            course:newObjPosition.course,
+            grade:newObjPosition.grade
+        },
+        method:'post',
+        success:function(response){
+            if(response.success){
+                updateData();
+            }
+            else{
+                console.log('data did not send via ajax');
+            }
+        }
+    })
 }
 /**
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
@@ -28,12 +52,6 @@ function addClicked(){
 function cancelClicked(){
     console.log("cancel button clicked");
     clearAddStudentForm();
-}
-function updateStudentList(){
-    $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
-    for(var i = 0; i < student_array.length; i++){
-        addStudentToDom(student_array[i]);
-    }
 }
 function getDataBtnClicked(){
     $.ajax({
@@ -84,7 +102,7 @@ function clearAddStudentForm(){
  * calculateAverage - loop through the global student array and calculate average grade and return that value
  * @returns {number}
  */
-function calculateAverage (){
+function calculateAverage(){
     var gradeTotal = 0;
     var studentAvg;
     if(student_array.length == 0){
@@ -109,7 +127,12 @@ function updateData(){
 /**
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
-
+function updateStudentList(){
+    $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
+    for(var i = 0; i < student_array.length; i++){
+        addStudentToDom(student_array[i]);
+    }
+}
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements
  * into the .student_list tbody
@@ -121,14 +144,38 @@ function addStudentToDom(studentObject){
     var tdGrade = $('<td>').text(studentObject.grade);
     var tdDel = $('<td>').html('<button class="btn btn-danger btn-xs">Delete</button>');
     var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdDel).on('click','button',function(){
+        requestServerDelete($(this));
         removeStudent($(this));
     });
     $('tbody').append(tr);
+}
+function requestServerDelete(delBtnElement){
+    var trIndex = delBtnElement.parents('tr').index();
+    var studentId = student_array[trIndex].id;
+    console.log("object to delete : ",studentId);
+    $.ajax({
+        url:'http://s-apis.learningfuze.com/sgt/delete',
+        dataType:'json',
+        data:{
+            api_key:'aEY4CgfQHB',
+            student_id : studentId},
+        method:'post',
+        success:function(response){
+            if(response.success){
+                console.log(response);
+            }
+            else{
+                console.log('delete failed');
+                console.log(response);
+            }
+        }
+    })
 }
 function removeStudent(delBtn){
     var dataRow = delBtn.parents('tr');
     student_array.splice(dataRow.index(),1);
     dataRow.remove();
+    updateData();
     console.log("remaining objects inside student_array : ", student_array);
 }
 /**
