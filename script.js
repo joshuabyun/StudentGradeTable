@@ -29,6 +29,30 @@ function cancelClicked(){
     console.log("cancel button clicked");
     clearAddStudentForm();
 }
+function getDataBtnClicked(){
+    $.ajax({
+        url:'http://s-apis.learningfuze.com/sgt/get',
+        dataType:'json',
+        data:{api_key:'aEY4CgfQHB'},
+        method:'post',
+        success:function(response){
+            if(response.success){
+                $('tbody > tr').remove();
+                reset();
+                var serverDataArray = response.data;
+                for(var i = 0;i<serverDataArray.length;i++){
+                    var studentObj = serverDataArray[i];
+                    student_array.push(studentObj);
+                    addStudentToDom(studentObj);
+                }
+                console.log("ajax call successful, student_array : ",student_array);
+            }
+            else{
+                console.log("unsuccessful");
+            }
+        }
+    });
+}
 /**
  * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
  *
