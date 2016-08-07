@@ -63,7 +63,7 @@
                     <td>{{ic.student.course}}</td>
                     <td>{{ic.student.grade}}</td>
                 </tr>
-                <tr ng-repeat = "obj in studentArray track by $index">
+                <tr ng-repeat = "obj in ic.studentArray track by $index">
                     <td>{{obj.name}}</td>
                     <td>{{obj.course}}</td>
                     <td>{{obj.grade}}</td>
@@ -87,16 +87,16 @@
             this.studentGrade = "Student Grade";
             this.operation = "Operation";
         });
-        app.controller("inputController",function($scope){
-            $scope.studentArray = [];
+        app.controller("inputController",function(){
+            this.studentArray = [];
             this.student = {id:null};
             this.addClicked = function(){
                 this.addStudent(this.student);
                 this.clearAddStudentForm();
-                console.log("updated studentArray : ",$scope.studentArray);
+                console.log("updated studentArray : ",this.studentArray);
             };
             this.addStudent = function(studentObj){
-                $scope.studentArray.push(studentObj);
+                this.studentArray.push(studentObj);
                 //this.calculateAverage();
             };
             this.cancelClicked = function(){
@@ -106,31 +106,41 @@
                 this.student ={};
             };
             this.delArrElement = function(index){
-                $scope.studentArray.splice(index,1);
-                console.log("updated studentArray after delete : ",$scope.studentArray);
+                this.studentArray.splice(index,1);
+                console.log("updated studentArray after delete : ",this.studentArray);
             }
-            this.getDataFromServer = function(){ //when dom loads or when 'get data from server' button pressed
-                var self = this;
-                console.log("var self = this : ",self);
-                $.ajax({
+//            this.getDataFromServer = function(){ //when dom loads or when 'get data from server' button pressed
+//                var self = this;
+//                console.log("studentArray before ajax call",this.studentArray);
+//                console.log("var self = this : ",self);
+//                $.ajax({
+//                    url: "http://s-apis.learningfuze.com/sgt/get",
+//                    dataType: "json",
+//                    data: {api_key:"Syh9yhgpdU"},
+//                    method: "post",
+//                    success: function(response){
+//                        var studentDatabase = response.data;
+//                        if (response.success){
+//                            console.log("new info fetched from the server : ",response);
+//                            console.log("var self = this inside the ajax success : ",self);
+//                            //resetApplication(); //if data received successfully, reset student array;
+//                            //$('tbody >tr').remove(); //remove current dom
+//                            for (var i = 0; i < studentDatabase.length; i++ ){
+//                                    ///need to use $http for ajax call in angular
+//                                    self.addStudent(response.data[i]);
+//                            }
+//                            console.log("studentArray after ajax call: ",self.studentArray);
+//                            //console.log("updated studentArray after ajax call : ",self.studentArray);
+//                        }
+//                    }
+//                });
+//            }
+            this.getDataFromServer = function(){
+                $http({
+                    method: 'post',
                     url: "http://s-apis.learningfuze.com/sgt/get",
-                    dataType: "json",
-                    data: {api_key:"Syh9yhgpdU"},
-                    method: "post",
-                    success: function(response){
-                        var studentDatabase = response.data;
-                        if (response.success){
-                            console.log("new info fetched from the server : ",response);
-                            console.log("var self = this inside the ajax success : ",self);
-                            //resetApplication(); //if data received successfully, reset student array;
-                            //$('tbody >tr').remove(); //remove current dom
-                            for (var i = 0; i < studentDatabase.length; i++ ){
-                                self.addStudent(response.data[i]);     ///need to use $http for ajax call in angular
-                            }
-                            //console.log("updated studentArray after ajax call : ",self.studentArray);
-                        }
-                    }
-                });
+                    data: {api_key:"Syh9yhgpdU"}
+                }).then(function )
             }
         });
     </script>
