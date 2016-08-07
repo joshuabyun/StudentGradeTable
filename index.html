@@ -8,7 +8,7 @@
     <meta name="viewport" content="initial-scale=1, user-scalable=no">
 </head>
 <body ng-app="myApp" ng-controller="namingController as fc">
-<div class="container" ng-controller="inputController as sc">
+<div class="container" ng-controller="inputController as ic">
     <div class="page-header">
         <h1 class="visible-md visible-lg">{{fc.title}}
             <small class="pull-right">{{fc.grade}}<span class="avgGrade label label-default">0</span></small>
@@ -24,26 +24,26 @@
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-user"></span>
                 </span>
-                <input type="text" class="form-control" placeholder="Student Name" ng-model="sc.form.studentName">
+                <input type="text" class="form-control" placeholder="Student Name" ng-model="ic.student.name">
             </div>
             <div class="input-group form-group">
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-list-alt"></span>
                 </span>
-                <input type="text" class="form-control" placeholder="Student Course" ng-model="sc.form.studentCourse">
+                <input type="text" class="form-control" placeholder="Student Course" ng-model="ic.student.course">
             </div>
             <div class="input-group form-group">
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-education"></span>
                 </span>
-                <input type="text" class="form-control" placeholder="Student Grade" ng-model="sc.form.studentGrade">
+                <input type="text" class="form-control" placeholder="Student Grade" ng-model="ic.student.grade">
             </div>
             <div class="form-group">
-                <button type="button" class="btn btn-success" ng-click="sc.displayAddedInfo()">{{fc.add}}</button>
-                <button type="button" class="btn btn-default" ng-click="sc.clearInput()">{{fc.cancel}}</button>
+                <button type="button" class="btn btn-success" ng-click="ic.addClicked()">{{fc.add}}</button>
+                <button type="button" class="btn btn-default" ng-click="ic.cancelClicked()">{{fc.cancel}}</button>
             </div>
             <div class="form-group">
-                <button type="button" class="btn btn-warning">{{fc.getData}}</button>
+                <button type="button" class="btn btn-warning" ng-click="ic.getDataFromServer()">{{fc.getData}}</button>
             </div>
         </form>
     </div>
@@ -59,9 +59,15 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{sc.form.studentName}}</td>
-                    <td>{{sc.form.studentCourse}}</td>
-                    <td>{{sc.form.studentGrade}}</td>
+                    <td>{{ic.student.name}}</td>
+                    <td>{{ic.student.course}}</td>
+                    <td>{{ic.student.grade}}</td>
+                </tr>
+                <tr ng-repeat = "obj in studentArray">
+                    <td>{{obj.name}}</td>
+                    <td>{{obj.course}}</td>
+                    <td>{{obj.grade}}</td>
+                    <td><button class="btn btn-danger" ng-click="ic.delArrElement($index)">Delete</button></td>
                 </tr>
             </tbody>
         </table>
@@ -81,26 +87,46 @@
             this.studentGrade = "Student Grade";
             this.operation = "Operation";
         });
-        app.controller("inputController", function(){
-            this.form = {};
-            this.displayAddedInfo = function(){
-                var tableRow = $("<tr>");
-                var tableNameData = $("<td>").append(this.form.studentName);
-                var tableCourseData = $("<td>").append(this.form.studentCourse);
-                var tableGradeData = $("<td>").append(this.form.studentGrade);
-                var tableDeleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
-                var tableDeleteColumn = $("<td>").append(tableDeleteButton);
-                tableRow.append(tableNameData, tableCourseData, tableGradeData, tableDeleteColumn);
-                $("tbody").append(tableRow);
-                $("form.form-group").trigger("reset");
+        app.controller("inputController",function($scope){
+            $scope.studentArray = [];
+            this.student = {id:null};
+            this.addClicked = function(){
+                this.addStudent();
+                this.clearAddStudentForm();
+                console.log("updated studentArray : ",$scope.studentArray);
             };
-            this.clearInput = function(){
-                $("form.form-group").trigger("reset");
-                this.form ={
-                    studentName : "",
-                    studentCourse : "",
-                    studentGrade : ""
-                };
+            this.addStudent = function(){
+                $scope.studentArray.push(this.student);
+                //this.calculateAverage();
+            };
+            this.cancelClicked = function(){
+                this.clearAddStudentForm();
+            };
+            this.clearAddStudentForm = function(){
+                this.student ={};
+            };
+            this.delArrElement = function(index){
+                $scope.studentArray.splice(index,1);
+                console.log("updated studentArray after delete : ",$scope.studentArray);
+            }
+            this.getDataFromServer = function(){ //when dom loads or when 'get data from server' button pressed
+                $.ajax({
+                    url: "http://s-apis.learningfuze.com/sgt/get",
+                    dataType: "json",
+                    data: {api_key:"Syh9yhgpdU"},
+                    method: "post",
+                    success: function(response){
+                        var studentDatabase = response.data;
+                        if (response.success){
+                            console.log("new info fetched from the server : ",response);
+                            //resetApplication(); //if data received successfully, reset student array;
+                            $('tbody >tr').remove(); //remove current dom
+                            for (var i = 0; i < studentDatabase.length; i++ ){
+                                //studentAdd();     ///need to use $http for ajax call in angular
+                            }
+                        }
+                    }
+                });
             }
         });
     </script>
