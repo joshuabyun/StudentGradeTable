@@ -87,7 +87,7 @@
             this.studentGrade = "Student Grade";
             this.operation = "Operation";
         });
-        app.controller("inputController",function(){
+        app.controller("inputController",function($scope,$http){
             this.studentArray = [];
             this.student = {id:null};
             this.addClicked = function(){
@@ -109,6 +109,23 @@
                 this.studentArray.splice(index,1);
                 console.log("updated studentArray after delete : ",this.studentArray);
             }
+
+            this.getDataFromServer = function(){
+                $http({
+                    method: 'post',
+                    url: 'http://s-apis.learningfuze.com/sgt/get',
+                    data: {'api_key': 'Syh9yhgpdU'},
+                    headers:{"Content-Type": "application/x-www-form-urlencoded"}//why is this needed?
+                }).then(function successCallback(response) {
+                    // this callback will be called asynchronously
+                    // when the response is available
+                    console.log("new info fetched from the server : ",response);
+                }, function errorCallback(response){
+                    console.log('hello');
+                })
+            };
+
+
 //            this.getDataFromServer = function(){ //when dom loads or when 'get data from server' button pressed
 //                var self = this;
 //                console.log("studentArray before ajax call",this.studentArray);
@@ -135,13 +152,6 @@
 //                    }
 //                });
 //            }
-            this.getDataFromServer = function(){
-                $http({
-                    method: 'post',
-                    url: "http://s-apis.learningfuze.com/sgt/get",
-                    data: {api_key:"Syh9yhgpdU"}
-                }).then(function )
-            }
         });
     </script>
 </div>
