@@ -111,58 +111,60 @@
                 console.log("updated studentArray after delete : ",this.studentArray);
             };
 
-            this.getDataFromServer = function(){
-                var self = this;
-                var req = {
-                    method: 'POST',
-                    url: 'http://s-apis.learningfuze.com/sgt/get',
-                    headers: {
-                        'Content-Type': "application/x-www-form-urlencoded"
-                    },
-                    data : $.param({api_key:"Syh9yhgpdU"}),
-                    dataType : "json"
-                };
-                $http(req).then(function successCallback(response) {
-                    // this callback will be called asynchronously
-                    // when the response is available
-                    console.log("new info fetched from the server : ",response);
-                    console.log(response.data.data.length);
-                    for (var i = 0; i < response.data.data.length; i++ ){
-                        self.addStudent(response.data.data[i]);
-                    };
-                }, function errorCallback(response){
-                    console.log('hello');
-                })
-            };
-
-
-//            this.getDataFromServer = function(){ //when dom loads or when 'get data from server' button pressed
+//            this.getDataFromServer = function(){//what does each element need in terms of controller?
 //                var self = this;
-//                console.log("studentArray before ajax call",this.studentArray);
-//                console.log("var self = this : ",self);
-//                $.ajax({
-//                    url: "http://s-apis.learningfuze.com/sgt/get",
-//                    dataType: "json",
-//                    data: {api_key:"Syh9yhgpdU"},
-//                    method: "post",
-//                    success: function(response){
-//                        var studentDatabase = response.data;
-//                        if (response.success){
-//                            console.log("new info fetched from the server : ",response);
-//                            console.log("var self = this inside the ajax success : ",self);
-//                            //resetApplication(); //if data received successfully, reset student array;
-//                            //$('tbody >tr').remove(); //remove current dom
-//                            for (var i = 0; i < studentDatabase.length; i++ ){
-//                                    ///need to use $http for ajax call in angular
-//                                    self.addStudent(response.data[i]);
-//
-//                            }
-//                            console.log("studentArray after ajax call: ",self.studentArray);
-//                            //console.log("updated studentArray after ajax call : ",self.studentArray);
-//                        }
-//                    }
-//                });
-//            }
+//                var req = {
+//                    method: 'POST',
+//                    url: 'http://s-apis.learningfuze.com/sgt/get',
+//                    headers: {
+//                        'Content-Type': "application/x-www-form-urlencoded"
+//                    },
+//                    data : $.param({api_key:"Syh9yhgpdU"}),
+//                    dataType : "json"
+//                };
+//                $http(req).then(function successCallback(response) {
+//                    // this callback will be called asynchronously
+//                    // when the response is available
+//                    console.log("new info fetched from the server : ",response);
+//                    console.log(response.data.data.length);
+//                    for (var i = 0; i < response.data.data.length; i++ ){
+//                        self.addStudent(response.data.data[i]);
+//                    };
+//                }, function errorCallback(response){
+//                    console.log('hello');
+//                })
+//            };
+
+
+            this.getDataFromServer = function(){ //when dom loads or when 'get data from server' button pressed
+                var self = this;
+                console.log("studentArray before ajax call",this.studentArray);
+                console.log("var self = this : ",self);
+                $.ajax({
+                    url: "http://s-apis.learningfuze.com/sgt/get",
+                    dataType: "json",
+                    data: {api_key:"Syh9yhgpdU"},
+                    method: "post",
+                    success: function(response){
+                        var studentDatabase = response.data;
+                        if (response.success){
+                            console.log("new info fetched from the server : ",response);
+                            console.log("var self = this inside the ajax success : ",self);
+                            //resetApplication(); //if data received successfully, reset student array;
+                            //$('tbody >tr').remove(); //remove current dom
+                            $scope.$apply(function(){
+                                console.log("$scope is applied");
+                                for (var i = 0; i < studentDatabase.length; i++ ){
+                                    ///need to use $http for ajax call in angular
+                                    self.addStudent(response.data[i]);
+                                };
+                            });
+                            console.log("studentArray after ajax call: ",self.studentArray);
+                            //console.log("updated studentArray after ajax call : ",self.studentArray);
+                        }
+                    }
+                });
+            }
         });
     </script>
 </div>
