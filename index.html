@@ -75,6 +75,7 @@
 
     <script>
         var app = angular.module("myApp", []);
+
         app.controller("namingController", function(){
             this.title = "Student Grade Table";
             this.grade = "Grade Average : ";
@@ -108,16 +109,16 @@
             this.delArrElement = function(index){
                 this.studentArray.splice(index,1);
                 console.log("updated studentArray after delete : ",this.studentArray);
-            }
+            };
 
             this.getDataFromServer = function(){
                 var req = {
                     method: 'POST',
                     url: 'http://s-apis.learningfuze.com/sgt/get',
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
+                        'Content-Type': "application/x-www-form-urlencoded"
                     },
-                    data: {api_key:"Syh9yhgpdU"},
+                    data : $.param({api_key:"Syh9yhgpdU"}),
                     dataType : "json"
                 }
                 $http(req).then(function successCallback(response) {
@@ -149,6 +150,7 @@
 //                            for (var i = 0; i < studentDatabase.length; i++ ){
 //                                    ///need to use $http for ajax call in angular
 //                                    self.addStudent(response.data[i]);
+//
 //                            }
 //                            console.log("studentArray after ajax call: ",self.studentArray);
 //                            //console.log("updated studentArray after ajax call : ",self.studentArray);
