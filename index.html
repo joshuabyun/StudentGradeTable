@@ -112,6 +112,7 @@
             };
 
             this.getDataFromServer = function(){
+                var self = this;
                 var req = {
                     method: 'POST',
                     url: 'http://s-apis.learningfuze.com/sgt/get',
@@ -120,11 +121,15 @@
                     },
                     data : $.param({api_key:"Syh9yhgpdU"}),
                     dataType : "json"
-                }
+                };
                 $http(req).then(function successCallback(response) {
                     // this callback will be called asynchronously
                     // when the response is available
                     console.log("new info fetched from the server : ",response);
+                    console.log(response.data.data.length);
+                    for (var i = 0; i < response.data.data.length; i++ ){
+                        self.addStudent(response.data.data[i]);
+                    };
                 }, function errorCallback(response){
                     console.log('hello');
                 })
