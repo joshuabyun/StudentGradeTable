@@ -11,10 +11,10 @@
 <div class="container" ng-controller="inputController as ic">
     <div class="page-header">
         <h1 class="visible-md visible-lg">{{fc.title}}
-            <small class="pull-right">{{fc.grade}}<span class="avgGrade label label-default">0</span></small>
+            <small class="pull-right">{{fc.grade}}<span class="avgGrade label label-default">{{ic.avg}}</span></small>
         </h1>
         <h3 class=" visible-xs visible-sm">{{fc.title}}
-            <small class="pull-right">{{fc.grade}}<span class="avgGrade label label-default">10</span></small>
+            <small class="pull-right">{{fc.grade}}<span class="avgGrade label label-default">{{ic.avg}}</span></small>
         </h3>
     </div>
     <div class="student-add-form form-group col-sm-4 col-sm-push-8">
@@ -92,15 +92,15 @@
         app.controller("inputController",function($scope,$http){
             this.studentArray = [];
             this.student = {id:null};
+            this.avg = 0;
             this.addClicked = function(){
                 this.addStudent(this.student);
                 this.clearAddStudentForm();
                 this.sendDataToServer();
-                console.log("updated studentArray : ",this.studentArray);
+                this.calculateAverage();
             };
             this.addStudent = function(studentObj){
                 this.studentArray.push(studentObj);
-                //this.calculateAverage();
             };
             this.cancelClicked = function(){
                 this.clearAddStudentForm();
@@ -111,23 +111,24 @@
             this.delArrElement = function(index){
                 console.log("index delArrElement index  : ",index);
                 this.requestServerDelete(index);
-                this.studentArray.splice(index,1);
-
+                this.studentArray.splice(index,1)
+                this.calculateAverage();
             };
 
             this.calculateAverage = function(){
-                var totalGrade = null;
+                console.log('average calculation initiated');
+                var totalGrade = 0;
                 if(this.studentArray.length == 0){
                     var averageGrade = 0;
                 }
                 else{
                     for (var i = 0; i < this.studentArray.length; i++){
-                          totalGrade += this.studentArray[i].grade;
-//                        totalGrade += parseFloat(this.studentArray[i]);
-//                        averageGrade = Math.floor((totalGrade/gradeArray.length));
+                          totalGrade += parseFloat(this.studentArray[i].grade);
+                          var averageGrade = totalGrade / this.studentArray.length;
                     }
                 }
-                //$(".avgGrade").text(averageGrade);
+                console.log("newly calculated avg : ", averageGrade);
+                this.avg = averageGrade.toFixed(2);
             }
 
 
@@ -160,7 +161,10 @@
                 $.ajax({
                     url:"http://s-apis.learningfuze.com/sgt/delete",
                     dataType:"json",
-                    data:{api_key:"Syh9yhgpdU",student_id:self.studentArray[studentId].id},
+                    data:{
+                        api_key:"Syh9yhgpdU",
+                        student_id:self.studentArray[studentId].id
+                    },
                     method:"post",
                     success :function(response){
                           console.log(response);
@@ -176,14 +180,13 @@
                         api_key:"Syh9yhgpdU",
                         name : self.studentArray[self.studentArray.length-1].name,
                         course : self.studentArray[self.studentArray.length-1].course,
-                        grade : self.studentArray[self.studentArray.length-1].grade,
+                        grade : self.studentArray[self.studentArray.length-1].grade
                     },
                     method: "post",
                     success: function(response){
                         if(response.success){
                             console.log("Data sent.");
                             console.log(response);
-                            self.getDataFromServer();
                         }
                         else{
                             console.log("Data not sent");
@@ -215,13 +218,14 @@
                                     ///need to use $http for ajax call in angular
                                     self.addStudent(studentDatabase[i]);
                                 };
+                                self.calculateAverage();
                             });
-                            console.log("studentArray after ajax call: ",self.studentArray);
                             //console.log("updated studentArray after ajax call : ",self.studentArray);
                         }
                     }
                 });
             }
+        this.getDataFromServer();
         });
     </script>
 </div>
