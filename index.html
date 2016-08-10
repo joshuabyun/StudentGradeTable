@@ -136,9 +136,9 @@
                 var req = {
                     method: 'POST',
                     url: "http://s-apis.learningfuze.com/sgt/create",
-                    headers: {
-                        'Content-Type': "application/x-www-form-urlencoded"
-                    },
+//                    headers: {
+//                        'Content-Type': "application/x-www-form-urlencoded"
+//                    },
                     data : $.param({
                         api_key:"Syh9yhgpdU",
                         name : self.studentArray[self.studentArray.length-1].name,
@@ -160,9 +160,9 @@
                 var req = {
                     method: 'POST',
                     url: 'http://s-apis.learningfuze.com/sgt/get',
-                    headers: {
-                        'Content-Type': "application/x-www-form-urlencoded"
-                    },
+//                    headers: {
+//                        'Content-Type': "application/x-www-form-urlencoded"
+//                    },
                     data : $.param({api_key:"Syh9yhgpdU"}),
                     dataType : "json"
                 };
@@ -189,9 +189,9 @@
                     data : $.param({"api_key" : "Syh9yhgpdU", "student_id" : self.studentArray[studentId].id}),
                     method : "post",
                     dataType : "json",
-                    headers: {
-                        'Content-Type': "application/x-www-form-urlencoded"
-                    }
+//                    headers: {
+//                        'Content-Type': "application/x-www-form-urlencoded"
+//                    }
                 };
                 $http(req).then(function(response){
                     console.log(response);
@@ -284,6 +284,9 @@
 //            }
         this.getDataFromServer();
         });
+                app.config(function($httpProvider){
+                    $httpProvider.defaults.headers.post = {'Content-Type': 'application/x-www-form-urlencoded'};
+                })
     </script>
 </div>
 </body>
