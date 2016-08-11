@@ -43,7 +43,7 @@
                 <button type="button" class="btn btn-default" ng-click="ic.cancelClicked()">{{fc.cancel}}</button>
             </div>
             <div class="form-group">
-                <button type="button" class="btn btn-warning" ng-click="ic.getDataFromServer()">{{fc.getData}}</button>
+                <button type="button" class="btn btn-warning" ng-click="ic.askServerData()">{{fc.getData}}</button>
             </div>
         </form>
     </div>
@@ -89,7 +89,50 @@
             this.operation = "Operation";
         });
 
-        app.controller("inputController",function($scope,$http){
+
+
+
+
+        app.factory("stgData", function($http, $q){
+            var service = {};
+            service.requestServerData = function(data){
+                var defer = $q.defer();
+                $http(data).then(function(response){
+                    console.log("app factory data received : success");
+                    data = response.data; //data needs to be accessible to all other functions, but there isnt global var available for $http service
+                    defer.resolve(data);
+                }, function(response){
+                    defer.reject(reponse);
+                });
+                return defer.promise;
+            };
+            return service;
+        });
+
+//        app.controller('inputController2', function(stgData){
+//
+//
+//            this.searchItunes = function(){
+//                this.data = {};
+//                self = this;
+//                var studentGradeData = stgData.requestServerData();///
+//
+//                studentGradeData.then(function(data){
+//                    console.log("then has been called with data : ", data);
+//                    self.data = data.results;
+//                }, function(){
+//                    console.error("why am i here");
+//                }).catch(function(){
+//                    console.error("my promise failed");
+//                });
+//            };
+//        });
+
+
+
+
+
+        app.controller("inputController",function($scope,$http,stgData){
             this.studentArray = [];
             this.student = {id:null};
             this.avg = 0;
@@ -129,73 +172,142 @@
                 }
                 console.log("newly calculated avg : ", averageGrade);
                 this.avg = averageGrade.toFixed(2);
-            }
+            };
+
 
             this.sendDataToServer = function(){
                 var self =this;
-                var req = {
+                var httpPram = {
                     method: 'POST',
                     url: "http://s-apis.learningfuze.com/sgt/create",
-//                    headers: {
-//                        'Content-Type': "application/x-www-form-urlencoded"
-//                    },
+//                  headers: {
+//                      'Content-Type': "application/x-www-form-urlencoded"
+//                  },
                     data : $.param({
                         api_key:"Syh9yhgpdU",
                         name : self.studentArray[self.studentArray.length-1].name,
                         course : self.studentArray[self.studentArray.length-1].course,
                         grade : self.studentArray[self.studentArray.length-1].grade}),
-                    dataType : "json"
-                };
-                 $http(req).then(function successCallback(response){
-                     console.log("Data Sent");
-                     console.log(response);
-                 }).catch(function errorCallback(response){
-                     console.log("Data Not Sent")
-                 })
+                    dataType : "json"};
+                var studentGradeData = stgData.requestServerData(httpPram);
+                studentGradeData.then(function(data){
+                    console.log("Data Sent");
+                    console.log(data);
+                });
             };
 
-            this.getDataFromServer = function(){//what does each element need in terms of controller?
-                var self = this;
-                this.studentArray = [];
-                var req = {
-                    method: 'POST',
-                    url: 'http://s-apis.learningfuze.com/sgt/get',
-//                    headers: {
-//                        'Content-Type': "application/x-www-form-urlencoded"
-//                    },
-                    data : $.param({api_key:"Syh9yhgpdU"}),
-                    dataType : "json"
-                };
-                $http(req).then(function successCallback(response) {
-                    // this callback will be called asynchronously
-                    // when the response is available
-                    console.log("new info fetched from the server : ",response);
-                    console.log(response.data.data.length);
-                    for (var i = 0; i < response.data.data.length; i++ ){
-                        self.addStudent(response.data.data[i]);
+
+            this.askServerData = function(){    ///using custom service
+                this.data = {};
+                self = this;
+                var httpPram = {
+                    url: "http://s-apis.learningfuze.com/sgt/get",//
+                    method: 'post',//
+                    data : $.param({api_key:"Syh9yhgpdU"})
+                }
+                var studentGradeData = stgData.requestServerData(httpPram);///
+                studentGradeData.then(function(data){ //then method is from the promise in the service (inside the $http)
+                    console.log("then has been called with data : ", data);
+                    //self.data = data.results;
+                    for (var i = 0; i < data.data.length; i++ ){
+                        self.addStudent(data.data[i]);
                     };
                     self.calculateAverage();
-                }, function errorCallback(response){
-                    console.log('hello');
-                })
+                }, function(){
+                    console.error("why am i here");
+                }).catch(function(){
+                    console.error("my promise failed");
+                });
             };
 
-            this.requestServerDelete = function(studentId){
+            this.requestServerDelete = function(studentId) {
                 var self = this;
-                console.log(self.studentArray[studentId].id);
-                console.log(self.studentArray[studentId]);
-                var req = {
-                    url : "http://s-apis.learningfuze.com/sgt/delete",
-                    data : $.param({"api_key" : "Syh9yhgpdU", "student_id" : self.studentArray[studentId].id}),
-                    method : "post",
-                    dataType : "json",
-//                    headers: {
-//                        'Content-Type': "application/x-www-form-urlencoded"
-//                    }
+                var httpPram = {
+//                  headers: {'Content-Type': "application/x-www-form-urlencoded"},
+                    url: "http://s-apis.learningfuze.com/sgt/delete",
+                    data: $.param({"api_key": "Syh9yhgpdU", "student_id": self.studentArray[studentId].id}),
+                    method: "post",
+                    dataType: "json"
                 };
-                $http(req).then(function(response){
-                    console.log(response);
+                var studentGradeData = stgData.requestServerData(httpPram);///
+                studentGradeData.then(function(data){
+                    console.log("delete item requested to server");
+                    console.log("answer received back from the server 'data' :", data);
                 })
+
+            };
+
+
+
+//            this.requestServerDelete = function(studentId){
+//                var self = this;
+//                console.log(self.studentArray[studentId].id);
+//                console.log(self.studentArray[studentId]);
+//                var req = {
+//                    url : "http://s-apis.learningfuze.com/sgt/delete",
+//                    data : $.param({"api_key" : "Syh9yhgpdU", "student_id" : self.studentArray[studentId].id}),
+//                    method : "post",
+//                    dataType : "json",
+////                    headers: {
+////                        'Content-Type': "application/x-www-form-urlencoded"
+////                    }
+//                };
+//                $http(req).then(function(response){
+//                    console.log(response);
+//                });
+
+
+//            this.sendDataToServer = function(){
+//                var self =this;
+//                var req = {
+//                    method: 'POST',
+//                    url: "http://s-apis.learningfuze.com/sgt/create",
+////                    headers: {
+////                        'Content-Type': "application/x-www-form-urlencoded"
+////                    },
+//                    data : $.param({
+//                        api_key:"Syh9yhgpdU",
+//                        name : self.studentArray[self.studentArray.length-1].name,
+//                        course : self.studentArray[self.studentArray.length-1].course,
+//                        grade : self.studentArray[self.studentArray.length-1].grade}),
+//                    dataType : "json"
+//                };
+//                 $http(req).then(function successCallback(response){
+//                     console.log("Data Sent");
+//                     console.log(response);
+//                 }).catch(function errorCallback(response){
+//                     console.log("Data Not Sent")
+//                 })
+//            };
+
+//            this.getDataFromServer = function(){//what does each element need in terms of controller?
+//                var self = this;
+//                this.studentArray = [];
+//                var req = {
+//                    method: 'POST',
+//                    url: 'http://s-apis.learningfuze.com/sgt/get',
+////                    headers: {
+////                        'Content-Type': "application/x-www-form-urlencoded"
+////                    },
+//                    data : $.param({api_key:"Syh9yhgpdU"}),
+//                    dataType : "json"
+//                };
+//
+//                $http(req).then(function successCallback(response) {
+//                    // this callback will be called asynchronously
+//                    // when the response is available
+//                    console.log("new info fetched from the server : ",response);
+//                    console.log(response.data.data.length);
+//                    for (var i = 0; i < response.data.data.length; i++ ){
+//                        self.addStudent(response.data.data[i]);
+//                    };
+//                    self.calculateAverage();
+//                }, function errorCallback(response){
+//                    console.log('hello');
+//                })
+//            };
+
+
 //                $.ajax({
 //                    url:"http://s-apis.learningfuze.com/sgt/delete",
 //                    dataType:"json",
@@ -208,7 +320,7 @@
 //                          console.log(response);
 //                    }
 //                })
-            }
+
 
 //            this.requestServerDelete = function(studentId){
 //                var self = this;
@@ -282,7 +394,8 @@
 //                    }
 //                });
 //            }
-        this.getDataFromServer();
+        //this.getDataFromServer();
+            this.askServerData();
         });
                 app.config(function($httpProvider){
                     $httpProvider.defaults.headers.post = {'Content-Type': 'application/x-www-form-urlencoded'};
