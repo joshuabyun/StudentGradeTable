@@ -8,41 +8,22 @@
 
 
 
-function receiveAction(crud){
+function receiveAction(crud,id){
     $.ajax({
         method:'post',
         dataType:'json',
-        url:'index_select.php',
+        url:"index_select.php",
         data:{
+            //id:id,
             name:$('#studentName').val(),
             course:$('#course').val(),
-            grade:$('#studentGrade').val()
+            grade:$('#studentGrade').val(),
+            action:crud
         },
         success: function(response){
             console.log(response);
         }
     })
-    
+
 }
 
-
-
-$.ajax({
-    url:'http://s-apis.learningfuze.com/sgt/create',
-    dataType:'json',
-    data:{
-        api_key:'aEY4CgfQHB',
-        name:newObjPosition.name,
-        course:newObjPosition.course,
-        grade:newObjPosition.grade
-    },
-    method:'post',
-    success:function(response){
-        if(response.success){
-            updateData();
-        }
-        else{
-            console.log('data did not send via ajax');
-        }
-    }
-})
