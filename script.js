@@ -148,9 +148,9 @@ function updateStudentList(){
  * @param studentObj
  */
 function addStudentToDom(studentObject,position){
-    var tdName = $('<td>').text(studentObject.name);
-    var tdCourse = $('<td>').text(studentObject.course);
-    var tdGrade = $('<td>').text(studentObject.grade);
+    var tdName = $('<td>').addClass('tdName').text(studentObject.name);
+    var tdCourse = $('<td>').addClass('tdCourse').text(studentObject.course);
+    var tdGrade = $('<td>').addClass('tdGrade').text(studentObject.grade);
     var btnDel = $('<button class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-erase"></span></button>');
     var btnEdit = $('<button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></button>');
     var tdBtn = $('<td>').append(btnEdit," ",btnDel);
@@ -161,9 +161,16 @@ function addStudentToDom(studentObject,position){
     }).on('click','.btn-primary',function(){
         var trIdVal = $(this).closest($('tr'))[0].id;
 
-        var tdName = $('<td><div class="form-group"><input type="text" class="form-control">');
-        var tdCourse = $('<td><div class="form-group"><input type="text" class="form-control">');
-        var tdGrade = $('<td><div class="form-group"><input type="text" class="form-control">');
+        var tdObj = {};
+        var trData = $(this).closest($('tr')).find("td");
+        for(var i =0 ; i<3;i++){
+            var className = $(trData[i]).attr("class");
+            tdObj[className] = $(trData[i]).text();
+        }
+
+        var tdName = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdName"]})));
+        var tdCourse = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdCourse"]})));
+        var tdGrade = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdGrade"]})));
         var updateBtn = $('<button class="btn btn-info">Update</button>');
         var tdUpdate = $('<td>').append(updateBtn);
         var tr = $('<tr>').attr({"id":trIdVal+"form"}).append(tdName,tdCourse,tdGrade,tdUpdate);
