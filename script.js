@@ -139,7 +139,7 @@ function updateData(){
 function updateStudentList(){
     $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
     for(var i = 0; i < student_array.length; i++){
-        addStudentToDom(student_array[i]);
+        addStudentToDom(student_array[i],i);
     }
 }
 /**
@@ -147,26 +147,29 @@ function updateStudentList(){
  * into the .student_list tbody
  * @param studentObj
  */
-function addStudentToDom(studentObject){
+function addStudentToDom(studentObject,position){
     var tdName = $('<td>').text(studentObject.name);
     var tdCourse = $('<td>').text(studentObject.course);
     var tdGrade = $('<td>').text(studentObject.grade);
     var btnDel = $('<button class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-erase"></span></button>');
     var btnEdit = $('<button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></button>');
     var tdBtn = $('<td>').append(btnEdit," ",btnDel);
-    var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdBtn).on('click','.btn-danger',function(){
+    var tr = $('<tr>').attr({"id" : "tr"+position}).append(tdName,tdCourse,tdGrade,tdBtn).on('click','.btn-danger',function(){
         requestServerDelete($(this));
         removeStudent($(this));
         updateData();
     }).on('click','.btn-primary',function(){
-        console.log($(this).closest($('tr'))[0].rowIndex);
-//         var row = document.getElementById("student-list").insertRow(1);
-//         var cell1 = row.insertCell(0);
-//         var cell2 = row.insertCell(1);
-//
-// // Add some text to the new cells:
-//         cell1.innerHTML = "NEW CELL1";
-//         cell2.innerHTML = "NEW CELL2";
+        var trIdVal = $(this).closest($('tr'))[0].id;
+
+        var tdName = $('<td><div class="form-group"><input type="text" class="form-control">');
+        var tdCourse = $('<td><div class="form-group"><input type="text" class="form-control">');
+        var tdGrade = $('<td><div class="form-group"><input type="text" class="form-control">');
+        var updateBtn = $('<button class="btn btn-info">Update</button>');
+        var tdUpdate = $('<td>').append(updateBtn);
+        var tr = $('<tr>').attr({"id":trIdVal+"form"}).append(tdName,tdCourse,tdGrade,tdUpdate);
+        $(tr).insertAfter($('#'+trIdVal));
+
+        $(this).closest($('tr')).remove();
     });
     $('tbody').append(tr);
 }
