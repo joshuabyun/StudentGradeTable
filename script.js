@@ -139,7 +139,8 @@ function updateData(){
 function updateStudentList(){
     $('tbody > tr').remove();   //delete what's shown on the DOM to avoid showing duplicated data in the table
     for(var i = 0; i < student_array.length; i++){
-        addStudentToDom(student_array[i],i);
+        var tr = addStudentToDom(student_array[i],i);
+        $('tbody').append(tr);
     }
 }
 /**
@@ -159,29 +160,61 @@ function addStudentToDom(studentObject,position){
         removeStudent($(this));
         updateData();
     }).on('click','.btn-primary',function(){
-        var trIdVal = $(this).closest($('tr'))[0].id;
-
-        var tdObj = {};
-        var trData = $(this).closest($('tr')).find("td");
-        for(var i =0 ; i<3;i++){
-            var className = $(trData[i]).attr("class");
-            tdObj[className] = $(trData[i]).text();
-        }
-
-        var tdName = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdName"]})));
-        var tdCourse = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdCourse"]})));
-        var tdGrade = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdGrade"]})));
-        var updateBtn = $('<button class="btn btn-info">Update</button>');
-        var tdUpdate = $('<td>').append(updateBtn);
-        var tr = $('<tr>').attr({"id":trIdVal+"form"}).append(tdName,tdCourse,tdGrade,tdUpdate);
-        $(tr).insertAfter($('#'+trIdVal));
-
-        $(this).closest($('tr')).remove();
+        //need to disable other inputs to avoid any error
+        createFormInputRow($(this));
     });
-    $('tbody').append(tr);
+    return tr;
 }
-
-
+function createFormInputRow(clickedEditBtn){
+    var tr = $(clickedEditBtn).closest($('tr'));
+    var trData = tr.find("td");
+    var trIdVal = tr[0].id;
+    var tdObj = {};
+    for(var i =0 ; i<3;i++){
+        var className = $(trData[i]).attr("class");
+        tdObj[className] = $(trData[i]).text();
+    }
+    var tdName = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdName"],"id" : "editName"})));
+    var tdCourse = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdCourse"],"id" : "editCourse"})));
+    var tdGrade = $('<td>').append($('<div class="form-group">').append($('<input type="text" class="form-control">').attr({"value" : tdObj["tdGrade"],"id" : "editGrade"})));
+    var updateBtn = $('<button class="btn btn-info">Update</button>');
+    var tdUpdate = $('<td>').append(updateBtn);
+    var trOutput = $('<tr>').attr({"id":trIdVal+"form"}).append(tdName,tdCourse,tdGrade,tdUpdate);
+    trOutput.on('click','.btn-info',function(){
+        var editedName = $('#editName').val();
+        var editedCourse = $('#editCourse').val();
+        var editedGrade = $('#editGrade').val();
+        var stduentArtayIndex = $("tbody > tr").index($('#'+trIdVal+"form"));
+        var studentId = student_array[stduentArtayIndex].id;
+        requestServerToUpdate(editedName,editedCourse,editedGrade,studentId);
+        //need to remove the input, 
+        //update the chart with current data
+        //enable all buttons/input again
+        
+    });
+    $(trOutput).insertAfter($('#'+trIdVal));
+    $(tr).remove();
+}
+function requestServerToUpdate(editedName,editedCourse,editedGrade,studentId){
+    $.ajax({
+        url:'server/get.php',
+        dataType: 'json',
+        data :{
+            studentId : studentId,
+            editedName : editedName,
+            editedCourse : editedCourse,
+            editedGrade : editedGrade
+        },
+        method:'post',
+        success:function(response){
+            if(response.success){
+                console.log(response);
+            }else{
+                console.log('updateFailed');
+            }
+        }
+    })
+}
 
 function requestServerDelete(delBtnElement){
     var trIndex = delBtnElement.parents('tr').index();
