@@ -151,13 +151,28 @@ function addStudentToDom(studentObject){
     var tdName = $('<td>').text(studentObject.name);
     var tdCourse = $('<td>').text(studentObject.course);
     var tdGrade = $('<td>').text(studentObject.grade);
-    var tdDel = $('<td>').html('<button class="btn btn-danger btn-xs">Delete</button>');
-    var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdDel).on('click','button',function(){
+    var btnDel = $('<button class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-erase"></span></button>');
+    var btnEdit = $('<button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></button>');
+    var tdBtn = $('<td>').append(btnEdit," ",btnDel);
+    var tr = $('<tr>').append(tdName,tdCourse,tdGrade,tdBtn).on('click','.btn-danger',function(){
         requestServerDelete($(this));
         removeStudent($(this));
+        updateData();
+    }).on('click','.btn-primary',function(){
+        console.log($(this).closest($('tr'))[0].rowIndex);
+//         var row = document.getElementById("student-list").insertRow(1);
+//         var cell1 = row.insertCell(0);
+//         var cell2 = row.insertCell(1);
+//
+// // Add some text to the new cells:
+//         cell1.innerHTML = "NEW CELL1";
+//         cell2.innerHTML = "NEW CELL2";
     });
     $('tbody').append(tr);
 }
+
+
+
 function requestServerDelete(delBtnElement){
     var trIndex = delBtnElement.parents('tr').index();
     var studentId = student_array[trIndex].id;
@@ -188,7 +203,6 @@ function removeStudent(delBtn){
     var dataRow = delBtn.parents('tr');
     student_array.splice(dataRow.index(),1);
     dataRow.remove();
-    updateData();
     console.log("remaining objects inside student_array : ", student_array);
 }
 /**

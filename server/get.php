@@ -1,6 +1,12 @@
 <?php
 require_once "mysql_connect.php";
 
+//if (!$conn) {
+//    $output['success'] = "false";
+//    $output['message'] = "Unable to connect to database.";
+//}
+
+
 if(!empty($_POST['requestType'])){
     switch ($_POST['requestType']) {
         case 'read':
@@ -10,7 +16,7 @@ if(!empty($_POST['requestType'])){
             requestDelete();
             break;
         case 'add':
-            requestAdd();
+            requestCreate();
             break;
         default:
             print 'request code not read';
@@ -18,21 +24,15 @@ if(!empty($_POST['requestType'])){
 }else{
     print 'post var not selected';
 }
-function requestAdd(){
+function requestCreate(){
     global $conn;
-    $name = $_POST['name'];
-    $course = $_POST['course'];
-    $grade = $_POST['grade'];
+    $name = $_POST['name']; //only char
+    $course = $_POST['course']; //char and number
+    $grade = $_POST['grade']; //number =<100
     if(!empty($name)&&!empty($course)&&!empty($grade)){
-        print $name;
-        print $course;
-        print $grade;
         $query1 = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
-        print $query1;
         mysqli_query($conn,$query1);
     }
-    
-//INSERT INTO `student_grade_table`.`students` (`id`, `name`, `grade`, `course`) VALUES (NULL, 'James', '75', '"Choir"');
 };
 function requestDelete(){
     global $conn;
@@ -51,7 +51,6 @@ function requestRead(){
     if(mysqli_num_rows($results) > 0){
         while($row = mysqli_fetch_assoc($results)){
             $output[] = $row;
-            //$sid = $row['id'];
         }
     }
     print_r(json_encode($output));
