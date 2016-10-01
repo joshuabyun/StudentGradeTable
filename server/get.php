@@ -1,12 +1,6 @@
 <?php
 require_once "mysql_connect.php";
 
-//if (!$conn) {
-//    $output['success'] = "false";
-//    $output['message'] = "Unable to connect to database.";
-//}
-
-
 if(!empty($_POST['requestType'])){
     switch ($_POST['requestType']) {
         case 'read':
@@ -35,13 +29,17 @@ function requestEdit(){
     $editedGrade = $_POST['editedGrade'];
     if(!empty($studentId)&&!empty($editedName)&&!empty($editedCourse)&&!empty($editedGrade)){
         $query ='UPDATE `students` SET `name`=\''.$editedName.'\',`grade`='.$editedGrade.',`course`=\''.$editedCourse.'\' WHERE `id`='.$studentId;
-        print($query);
         mysqli_query($conn,$query);
+        if(mysqli_affected_rows($conn) == 1){
+            //db updated
+        }else{
+            //db not updated
+        };
+
+    }else{
+        //1 or more items have not been inputted.
     }
 }
-
-//UPDATE `students` SET `name`='Peter',`grade`=75,`course`='Art' WHERE `id`=23
-
 function requestCreate(){
     global $conn;
     $name = $_POST['name']; //only char
@@ -73,22 +71,6 @@ function requestRead(){
     }
     print_r(json_encode($output));
 }
-
-
-
-
-
-
-
-
-
-//$result = $conn->query($query);
-//$count = 0;
-//if($result->num_rows > 0){
-//    while($row = $result->fetch_assoc()){
-//        $output[] = $row;
-//    }
-//}
 
 ?>
 
