@@ -186,7 +186,7 @@ function createFormInputRow(clickedEditBtn){
         var editedGrade = $('#editGrade').val();
         var stduentArtayIndex = $("tbody > tr").index($('#'+trIdVal+"form"));
         var studentId = student_array[stduentArtayIndex].id;
-        requestServerToUpdate(editedName,editedCourse,editedGrade,studentId);
+        requestServerToEdit(editedName,editedCourse,editedGrade,studentId);
         //need to remove the input, 
         //update the chart with current data
         //enable all buttons/input again
@@ -195,11 +195,12 @@ function createFormInputRow(clickedEditBtn){
     $(trOutput).insertAfter($('#'+trIdVal));
     $(tr).remove();
 }
-function requestServerToUpdate(editedName,editedCourse,editedGrade,studentId){
+function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
     $.ajax({
         url:'server/get.php',
         dataType: 'json',
         data :{
+            requestType : "edit",
             studentId : studentId,
             editedName : editedName,
             editedCourse : editedCourse,

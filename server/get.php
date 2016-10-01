@@ -18,20 +18,38 @@ if(!empty($_POST['requestType'])){
         case 'add':
             requestCreate();
             break;
+        case 'edit':
+            requestEdit();
+            break;
         default:
             print 'request code not read';
     }
 }else{
     print 'post var not selected';
 }
+function requestEdit(){
+    global $conn;
+    $studentId = $_POST['studentId'];
+    $editedName = $_POST['editedName'];
+    $editedCourse = $_POST['editedCourse'];
+    $editedGrade = $_POST['editedGrade'];
+    if(!empty($studentId)&&!empty($editedName)&&!empty($editedCourse)&&!empty($editedGrade)){
+        $query ='UPDATE `students` SET `name`=\''.$editedName.'\',`grade`='.$editedGrade.',`course`=\''.$editedCourse.'\' WHERE `id`='.$studentId;
+        print($query);
+        mysqli_query($conn,$query);
+    }
+}
+
+//UPDATE `students` SET `name`='Peter',`grade`=75,`course`='Art' WHERE `id`=23
+
 function requestCreate(){
     global $conn;
     $name = $_POST['name']; //only char
     $course = $_POST['course']; //char and number
     $grade = $_POST['grade']; //number =<100
     if(!empty($name)&&!empty($course)&&!empty($grade)){
-        $query1 = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
-        mysqli_query($conn,$query1);
+        $query = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
+        mysqli_query($conn,$query);
     }
 };
 function requestDelete(){
