@@ -66,7 +66,7 @@ function requestEdit(){
             //db updated
             $output['success'][] = 'entry successfully edited';
         }else{
-            $output['error'][] = 'edit unsuccessful';
+            $output['success'][] = 'no input edited';
         };
     }else{
         $output['error'][] = 'please input all 3 inputs';

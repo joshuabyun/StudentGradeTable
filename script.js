@@ -11,15 +11,20 @@ function addClicked(){
         return;
     }else{
         clearAddStudentForm();//clear form
+        $('button:not(.btn-info)').addClass('disabled');
         sendServerRequestToAdd(studentObj);
     }//create an object based on form info and push it to the student_array
 }   
 function cancelClicked(){
     clearAddStudentForm();                                                                                              
 }
-function getDataBtnClicked(){
+function refreshBtnClicked(){
+    $('button:not(.btn-info)').addClass('disabled');
+    var callBackAfterSuccess = function(){
+        $('button:not(.btn-info)').removeClass('disabled');
+    };
     removeStudentFromDom($('tbody > tr'));
-    sendSeverRequestToRead();
+    sendSeverRequestToRead(callBackAfterSuccess);
 }
 function addStudentToArray(){
     var student = {};
@@ -86,11 +91,8 @@ function createStudentDomTr(studentObject,position){
     var btnEdit = $('<button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></button>');
     var tdBtn = $('<td>').append(btnEdit," ",btnDel);
     var tr = $('<tr>').attr({"id" : "tr"+position}).append(tdName,tdCourse,tdGrade,tdBtn).on('click','.btn-danger',function(){ //click handler to delete a clicked row
+        $('button:not(.btn-info)').addClass('disabled');
         requestServerDelete($(this));
-        // removeStudentObjFromArr($(this).parents('tr').index());
-        // removeStudentFromDom($(this).parents('tr'));
-        // calculateAverageAndUpdate();
-        // updateStudentListInDom();
     }).on('click','.btn-primary',function(){
         createFormInputRow($(this));
     });
@@ -115,13 +117,13 @@ function createFormInputRow(clickedEditBtn){
         };
         var tempTr = createStudentDomTr(editedData,studentArrayIndex);
         $(tempTr).insertAfter($('#'+trIdVal+'form'));                   //temporarly adding the edited data row before ajax call is finished.
-        $('#'+tempTr[0].id+" .btn").addClass('disabled');
+        $('#'+tempTr[0].id+" .btn").addClass('disabled');               //disabling temp(after edited inputs were sent to server via ajax) row btns
         removeStudentFromDom($(this).closest($('tr')));
         requestServerToEdit(editedData.name,editedData.course,editedData.grade,studentId);
     });
     $(trOutput).insertAfter($('#'+trIdVal));
     removeStudentFromDom(tr);
-    $('button:not(.btn-info)').addClass('disabled');//to disable all buttons except .btn-info
+    $('button:not(.btn-info)').addClass('disabled');//to disable all buttons except .btn-info(update btn) whencreated
 }
 function createDefaultInputValObj(clickedEditBtn){ //looks for the parent tr and creates an object of name, course, grade based on the input value
     var tr = $(clickedEditBtn).closest($('tr'));
@@ -165,6 +167,9 @@ function sendSeverRequestToRead(callBack){//read
 }
 function sendServerRequestToAdd(studentObj){
     console.log("sendServerRequestToAdd");
+    var callBackAfterSuccess = function(){
+        $('button:not(.btn-info)').removeClass('disabled');
+    };
     $.ajax({
         url : 'server/get.php',
         dataType:'json',
@@ -178,7 +183,7 @@ function sendServerRequestToAdd(studentObj){
         success:function(response){
             if(response.success){
                 console.log('added response :',response);
-                sendSeverRequestToRead();
+                sendSeverRequestToRead(callBackAfterSuccess);
             }
         }
     })
@@ -226,6 +231,7 @@ function requestServerDelete(delBtnElement){
                 removeStudentFromDom(delBtnElement.parents('tr'));
                 calculateAverageAndUpdate();
                 updateStudentListInDom();
+                $('button:not(.btn-info)').removeClass('disabled');
             }
             else{
                 console.log(response);
@@ -235,7 +241,7 @@ function requestServerDelete(delBtnElement){
 }
 function initialize(){
     clearStudentArray();
-    getDataBtnClicked();
+    refreshBtnClicked();
     studentName = $('#studentName');
     course = $('#course');
     studentGrade = $('#studentGrade');
