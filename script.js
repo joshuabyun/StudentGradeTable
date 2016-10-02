@@ -6,11 +6,13 @@ var studentName = null;
 var course = null;
 var studentGrade = null;
 function addClicked(){
-    addStudentToArray(); //create an object based on form info and push it to the student_array
-    calculateAverageAndUpdate();
-    updateStudentListInDom();
-    clearAddStudentForm();//clear form                                                                                  
-    sendServerRequestToAdd();                                                                                           
+    var studentObj = addStudentToArray();
+    if(!studentObj){
+        return;
+    }else{
+        clearAddStudentForm();//clear form
+        sendServerRequestToAdd(studentObj);
+    }//create an object based on form info and push it to the student_array
 }   
 function cancelClicked(){
     clearAddStudentForm();                                                                                              
@@ -23,8 +25,20 @@ function addStudentToArray(){
     student.name = studentName.val();
     student.course = course.val();
     student.grade = studentGrade.val();
+    if(!checkValidEntry(student)){
+        console.log("please fill in all 3 inputs");
+        return false;
+    }
     console.log("student object created", student);
-    student_array.push(student);
+    //student_array.push(student);
+    return student;
+}
+function checkValidEntry(student){
+    if(student.name==""||student.course==""||student.grade==""){
+      return false;
+    }else{
+        return true;
+    }
 }
 function clearAddStudentForm(){
     studentName.val('');
@@ -77,7 +91,6 @@ function createStudentDomTr(studentObject,position){
         calculateAverageAndUpdate();
         updateStudentListInDom();
     }).on('click','.btn-primary',function(){
-        //need to disable other inputs to avoid any error
         createFormInputRow($(this));
     });
     return tr;
@@ -94,13 +107,20 @@ function createFormInputRow(clickedEditBtn){
     trOutput.on('click','.btn-info',function(){
         var studentArrayIndex = $("tbody > tr").index($('#'+trIdVal+"form"));
         var studentId = student_array[studentArrayIndex].id;
-        requestServerToEdit($('#editName').val(),$('#editCourse').val(),$('#editGrade').val(),studentId);
-        //need to remove the input,
-        //update the chart with current data
-        //enable all buttons/input again
+        var editedData = {
+            name:$('#editName').val(),
+            course:$('#editCourse').val(),
+            grade:$('#editGrade').val()
+        };
+        var tempTr = createStudentDomTr(editedData,studentArrayIndex);
+        $(tempTr).insertAfter($('#'+trIdVal+'form'));                   //temporarly adding the edited data row before ajax call is finished.
+        $('#'+tempTr[0].id+" .btn").addClass('disabled');
+        removeStudentFromDom($(this).closest($('tr')));
+        requestServerToEdit(editedData.name,editedData.course,editedData.grade,studentId);
     });
     $(trOutput).insertAfter($('#'+trIdVal));
-    removeStudentFromDom(tr)
+    removeStudentFromDom(tr);
+    $('button:not(.btn-info)').addClass('disabled');//to disable all buttons except .btn-info
 }
 function createDefaultInputValObj(clickedEditBtn){ //looks for the parent tr and creates an object of name, course, grade based on the input value
     var tr = $(clickedEditBtn).closest($('tr'));
@@ -119,42 +139,41 @@ function sendSeverRequestToRead(){//read
         data:{requestType : 'read'},
         method:'post',
         success:function(response){
-            clearStudentArray();//clear current student_Array
-            var serverDataArray = response;//response.data;
-            for(var i = 0;i<serverDataArray.length;i++){
-                var studentObj = serverDataArray[i];
-                student_array.push(studentObj);
+            if(response.success){
+                clearStudentArray();//clear current student_Array
+                var serverDataArray = response.success;//response.data;
+                for(var i = 0;i<serverDataArray.length;i++){
+                    var studentObj = serverDataArray[i];
+                    student_array.push(studentObj);
+                }
+                calculateAverageAndUpdate();
+                updateStudentListInDom();
+                console.log('response',response);
+            }else{
+                console.log('response',response);
             }
-            calculateAverageAndUpdate();
-            updateStudentListInDom();
-            console.log(response);
         },
         error : function(){
             console.log('error');
         }
     });
 }
-function sendServerRequestToAdd(){
+function sendServerRequestToAdd(studentObj){
     console.log("sendServerRequestToAdd");
-    var newObjPosition = student_array[student_array.length -1];
     $.ajax({
         url : 'server/get.php',
-        // url:'http://s-apis.learningfuze.com/sgt/create',
         dataType:'json',
         data:{
             requestType:"add",  
-            name:newObjPosition.name,
-            course:newObjPosition.course,
-            grade:newObjPosition.grade
+            name:studentObj.name,
+            course:studentObj.course,
+            grade:studentObj.grade
         },
         method:'post',
         success:function(response){
             if(response.success){
-                calculateAverageAndUpdate();
-                updateStudentListInDom();
-            }
-            else{
-                console.log('data did not send via ajax');
+                console.log('added response :',response);
+                sendSeverRequestToRead();
             }
         }
     })
@@ -172,10 +191,12 @@ function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
         },
         method:'post',
         success:function(response){
-            if(response){
+            if(response.success){
+                sendSeverRequestToRead();
+                $('button:not(.btn-info)').removeClass('disabled'); 
                 console.log(response);
             }else{
-                console.log('updateFailed');
+                console.log(response);
             }
         }
     })
@@ -196,7 +217,6 @@ function requestServerDelete(delBtnElement){
                 console.log(response);
             }
             else{
-                console.log('delete failed');
                 console.log(response);
             }
         }
@@ -208,7 +228,6 @@ function initialize(){
     course = $('#course');
     studentGrade = $('#studentGrade');
 }
-
 $(document).ready(function(){
         initialize();
 });

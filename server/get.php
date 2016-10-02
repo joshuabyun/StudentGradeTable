@@ -21,6 +21,39 @@ if(!empty($_POST['requestType'])){
 }else{
     print 'post var not selected';
 }
+function requestRead(){
+    global $conn;
+
+    $query = 'SELECT * FROM `students`';
+    $results = mysqli_query($conn,$query);
+    if(mysqli_num_rows($results) > 0){
+        while($row = mysqli_fetch_assoc($results)){
+            $output['success'][] = $row;
+        }
+    }else{
+        $output['error'][] = 'data base is empty';
+    }
+    print_r(json_encode($output));
+    mysqli_free_result($results); //The mysqli_free_result() function frees the memory associated with the result.
+    //mysqli_close($conn)  - is this necessary?
+}
+function requestCreate(){
+    global $conn;
+    $name = $_POST['name']; //only char
+    $course = $_POST['course']; //char and number
+    $grade = $_POST['grade']; //number =<100
+    if(!empty($name)&&!empty($course)&&!empty($grade)){
+        $query = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
+        $results = mysqli_query($conn,$query);
+        if(mysqli_affected_rows($conn) == 1){
+            $output['success'][] = 'entry successfully added';
+        }else if(mysqli_affected_rows($conn) == 0){
+            $output['error'][] = 'entry unsuccessfully added';
+        }
+    }
+    print_r(json_encode($output));
+    //mysqli_free_result($results);
+};
 function requestEdit(){
     global $conn;
     $studentId = $_POST['studentId'];
@@ -32,45 +65,32 @@ function requestEdit(){
         mysqli_query($conn,$query);
         if(mysqli_affected_rows($conn) == 1){
             //db updated
+            $output['success'][] = 'entry successfully edited';
         }else{
-            //db not updated
+            $output['error'][] = 'edit unsuccessful';
         };
-
     }else{
         //1 or more items have not been inputted.
+        $output['error'][] = 'please input all 3 inputs';
     }
+    print_r(json_encode($output));
 }
-function requestCreate(){
-    global $conn;
-    $name = $_POST['name']; //only char
-    $course = $_POST['course']; //char and number
-    $grade = $_POST['grade']; //number =<100
-    if(!empty($name)&&!empty($course)&&!empty($grade)){
-        $query = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
-        mysqli_query($conn,$query);
-    }
-};
+
 function requestDelete(){
     global $conn;
     if(!empty($_POST['studentId'])){
         $studentID = $_POST['studentId'];
         $query = 'DELETE FROM `students` WHERE `id` = '.$studentID;
         mysqli_query($conn,$query);
-    }else{
-        print 'studentId invalid';
-    }
-}
-function requestRead(){
-    global $conn;
-    $query = 'SELECT * FROM `students`';
-    $results = mysqli_query($conn,$query);
-    if(mysqli_num_rows($results) > 0){
-        while($row = mysqli_fetch_assoc($results)){
-            $output[] = $row;
+        if(mysqli_affected_rows($conn) == 1){
+            $output['success'][] = 'entry successfully deleted';
+        }else if(mysqli_affected_rows($conn) == 0){
+            $output['error'][] = 'delete not successful';
         }
+    }else{
+        $output['error'][] = 'student ID not available';
     }
     print_r(json_encode($output));
 }
-
 ?>
 
