@@ -23,7 +23,6 @@ if(!empty($_POST['requestType'])){
 }
 function requestRead(){
     global $conn;
-
     $query = 'SELECT * FROM `students`';
     $results = mysqli_query($conn,$query);
     if(mysqli_num_rows($results) > 0){
@@ -70,8 +69,11 @@ function requestEdit(){
             $output['error'][] = 'edit unsuccessful';
         };
     }else{
-        //1 or more items have not been inputted.
         $output['error'][] = 'please input all 3 inputs';
+//        $output['errorVar'][]=$studentId;
+//        $output['errorVar'][]=$editedName;
+//        $output['errorVar'][]=$editedCourse;
+//        $output['errorVar'][]=$editedGrade;
     }
     print_r(json_encode($output));
 }

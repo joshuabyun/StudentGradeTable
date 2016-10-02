@@ -18,7 +18,8 @@ function cancelClicked(){
     clearAddStudentForm();                                                                                              
 }
 function getDataBtnClicked(){
-    sendSeverRequestToRead();                                                                                           
+    removeStudentFromDom($('tbody > tr'));
+    sendSeverRequestToRead();
 }
 function addStudentToArray(){
     var student = {};
@@ -86,10 +87,10 @@ function createStudentDomTr(studentObject,position){
     var tdBtn = $('<td>').append(btnEdit," ",btnDel);
     var tr = $('<tr>').attr({"id" : "tr"+position}).append(tdName,tdCourse,tdGrade,tdBtn).on('click','.btn-danger',function(){ //click handler to delete a clicked row
         requestServerDelete($(this));
-        removeStudentObjFromArr($(this).parents('tr').index());
-        removeStudentFromDom($(this).parents('tr'));
-        calculateAverageAndUpdate();
-        updateStudentListInDom();
+        // removeStudentObjFromArr($(this).parents('tr').index());
+        // removeStudentFromDom($(this).parents('tr'));
+        // calculateAverageAndUpdate();
+        // updateStudentListInDom();
     }).on('click','.btn-primary',function(){
         createFormInputRow($(this));
     });
@@ -132,7 +133,8 @@ function createDefaultInputValObj(clickedEditBtn){ //looks for the parent tr and
     }
     return tdObj;
 }
-function sendSeverRequestToRead(){//read
+function sendSeverRequestToRead(callBack){//read
+    var callBackFunc = callBack;
     $.ajax({
         url : 'server/get.php',
         dataType:'json',
@@ -148,6 +150,9 @@ function sendSeverRequestToRead(){//read
                 }
                 calculateAverageAndUpdate();
                 updateStudentListInDom();
+                if(callBackFunc != undefined){
+                    callBackFunc();
+                }
                 console.log('response',response);
             }else{
                 console.log('response',response);
@@ -179,6 +184,9 @@ function sendServerRequestToAdd(studentObj){
     })
 }
 function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
+    var callBackAfterSuccess = function(){
+        $('button:not(.btn-info)').removeClass('disabled');
+    };
     $.ajax({
         url:'server/get.php',
         dataType: 'json',
@@ -192,8 +200,7 @@ function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
         method:'post',
         success:function(response){
             if(response.success){
-                sendSeverRequestToRead();
-                $('button:not(.btn-info)').removeClass('disabled'); 
+                sendSeverRequestToRead(callBackAfterSuccess);
                 console.log(response);
             }else{
                 console.log(response);
@@ -215,6 +222,10 @@ function requestServerDelete(delBtnElement){
         success:function(response){
             if(response.success){
                 console.log(response);
+                removeStudentObjFromArr(trIndex);
+                removeStudentFromDom(delBtnElement.parents('tr'));
+                calculateAverageAndUpdate();
+                updateStudentListInDom();
             }
             else{
                 console.log(response);
@@ -224,6 +235,7 @@ function requestServerDelete(delBtnElement){
 }
 function initialize(){
     clearStudentArray();
+    getDataBtnClicked();
     studentName = $('#studentName');
     course = $('#course');
     studentGrade = $('#studentGrade');
