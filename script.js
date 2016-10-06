@@ -183,8 +183,8 @@ function sendServerRequestToAdd(studentObj){
         success:function(response){
             if(response.success){
                 console.log('added response :',response);
-                sendSeverRequestToRead(callBackAfterSuccess);
-                //location.reload();
+                //sendSeverRequestToRead(callBackAfterSuccess);
+                location.reload();
             }
         }
     })

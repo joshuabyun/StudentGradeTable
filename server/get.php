@@ -32,7 +32,6 @@ function requestRead(){
         $output['error'][] = 'data base is empty';
     }
     print_r(json_encode($output));
-    //mysqli_free_result($results); //The mysqli_free_result() function frees the memory associated with the result.
     mysqli_close($conn); // - is this necessary?
 }
 function requestCreate(){
@@ -51,7 +50,6 @@ function requestCreate(){
         }
     }
     print_r(json_encode($output));
-    //mysqli_free_result($results);
     mysqli_close($conn);
 }
 function requestEdit(){
@@ -93,5 +91,6 @@ function requestDelete(){
     print_r(json_encode($output));
     mysqli_close($conn);
 }
+
 ?>
 
