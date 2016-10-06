@@ -1,6 +1,5 @@
 <?php
 require_once "mysql_connect.php";
-
 if(!empty($_POST['requestType'])){
     switch ($_POST['requestType']) {
         case 'read':
@@ -23,7 +22,7 @@ if(!empty($_POST['requestType'])){
 }
 function requestRead(){
     global $conn;
-    $query = 'SELECT * FROM `students`';
+    $query = "SELECT * FROM students";
     $results = mysqli_query($conn,$query);
     if(mysqli_num_rows($results) > 0){
         while($row = mysqli_fetch_assoc($results)){
@@ -33,8 +32,8 @@ function requestRead(){
         $output['error'][] = 'data base is empty';
     }
     print_r(json_encode($output));
-    mysqli_free_result($results); //The mysqli_free_result() function frees the memory associated with the result.
-    //mysqli_close($conn)  - is this necessary?
+    //mysqli_free_result($results); //The mysqli_free_result() function frees the memory associated with the result.
+    mysqli_close($conn); // - is this necessary?
 }
 function requestCreate(){
     global $conn;
@@ -42,6 +41,7 @@ function requestCreate(){
     $course = $_POST['course']; //char and number
     $grade = $_POST['grade']; //number =<100
     if(!empty($name)&&!empty($course)&&!empty($grade)){
+        //$query = "INSERT INTO students (name, grade, course) VALUES ('$name','$grade','$course')";
         $query = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
         $results = mysqli_query($conn,$query);
         if(mysqli_affected_rows($conn) == 1){
@@ -52,7 +52,8 @@ function requestCreate(){
     }
     print_r(json_encode($output));
     //mysqli_free_result($results);
-};
+    mysqli_close($conn);
+}
 function requestEdit(){
     global $conn;
     $studentId = $_POST['studentId'];
@@ -60,7 +61,8 @@ function requestEdit(){
     $editedCourse = $_POST['editedCourse'];
     $editedGrade = $_POST['editedGrade'];
     if(!empty($studentId)&&!empty($editedName)&&!empty($editedCourse)&&!empty($editedGrade)){
-        $query ='UPDATE `students` SET `name`=\''.$editedName.'\',`grade`='.$editedGrade.',`course`=\''.$editedCourse.'\' WHERE `id`='.$studentId;
+        //$query ='UPDATE `students` SET `name`=\''.$editedName.'\',`grade`='.$editedGrade.',`course`=\''.$editedCourse.'\' WHERE `id`='.$studentId;
+        $query ="UPDATE students SET name='$editedName',grade='$editedGrade',course ='$editedCourse' WHERE id=''$studentId";
         mysqli_query($conn,$query);
         if(mysqli_affected_rows($conn) == 1){
             //db updated
@@ -70,19 +72,15 @@ function requestEdit(){
         };
     }else{
         $output['error'][] = 'please input all 3 inputs';
-//        $output['errorVar'][]=$studentId;
-//        $output['errorVar'][]=$editedName;
-//        $output['errorVar'][]=$editedCourse;
-//        $output['errorVar'][]=$editedGrade;
     }
     print_r(json_encode($output));
+    mysqli_close($conn);
 }
-
 function requestDelete(){
     global $conn;
     if(!empty($_POST['studentId'])){
         $studentID = $_POST['studentId'];
-        $query = 'DELETE FROM `students` WHERE `id` = '.$studentID;
+        $query = 'DELETE FROM students WHERE id = '.$studentID;
         mysqli_query($conn,$query);
         if(mysqli_affected_rows($conn) == 1){
             $output['success'][] = 'entry successfully deleted';
@@ -93,6 +91,7 @@ function requestDelete(){
         $output['error'][] = 'student ID not available';
     }
     print_r(json_encode($output));
+    mysqli_close($conn);
 }
 ?>
 
