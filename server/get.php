@@ -32,7 +32,7 @@ function requestRead(){
         $output['error'][] = 'data base is empty';
     }
     print_r(json_encode($output));
-    mysqli_close($conn); // - is this necessary?
+    mysqli_close($conn);
 }
 function requestCreate(){
     global $conn;
@@ -42,7 +42,7 @@ function requestCreate(){
     if(!empty($name)&&!empty($course)&&!empty($grade)){
         //$query = "INSERT INTO students (name, grade, course) VALUES ('$name','$grade','$course')";
         $query = 'INSERT INTO `students`(name, grade, course) VALUES (\''.$name.'\',\''.$grade.'\',\''.$course.'\')';
-        $results = mysqli_query($conn,$query);
+        mysqli_query($conn,$query);
         if(mysqli_affected_rows($conn) == 1){
             $output['success'][] = 'entry successfully added';
         }else if(mysqli_affected_rows($conn) == 0){
