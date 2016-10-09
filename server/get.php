@@ -91,6 +91,5 @@ function requestDelete(){
     print_r(json_encode($output));
     mysqli_close($conn);
 }
-
 ?>
 

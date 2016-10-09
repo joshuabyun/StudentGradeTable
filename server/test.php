@@ -1,19 +1,10 @@
-//{"success":true,"data":[{"id":1,"name":"Elizabeth","grade":89,"course":"Library Science"},{"id":2,"name":"Brian","grade":75,"course":"Shiba Inu Care"},{"id":3,"name":"Dan","grade":50,"course":"Chaos Theory"},{"id":4,"name":"Nicholas","grade":98,"course":"Intensity"},{"id":5,"name":"Sam","grade":94,"course":"Coders in History"},{"id":6,"name":"Oleg","grade":95,"course":"Multi-tasking"},{"id":7,"name":"Kevin","grade":90,"course":"Offal Offerings"},{"id":8,"name":"Joshua","grade":75,"course":"Musical Name Theory"},{"id":9,"name":"Rosemarie","grade":100,"course":"Ninja Quietness"},{"id":10,"name":"Kyle","grade":80,"course":"Korean History"},{"id":11,"name":"Sean","grade":75,"course":"Motorcycle Parking"},{"id":13,"name":"Bill","grade":95,"course":"Body Guarding Ettiquette"},{"id":146,"name":"Trump","grade":54,"course":"Make America Great"},{"id":235,"name":"test","grade":33,"course":"vanish"},{"id":297,"name":"afd","grade":11,"course":"adsf"},{"id":428,"name":"the","grade":55,"course":"man"},{"id":480,"name":"thor","grade":33,"course":"hammers"},{"id":490,"name":"thor","grade":33,"course":"hammers"},{"id":491,"name":"thor","grade":33,"course":"hammers"},{"id":492,"name":"thor","grade":33,"course":"hammers"},{"id":493,"name":"thor","grade":33,"course":"hammers"},{"id":494,"name":"thor","grade":33,"course":"hammers"},{"id":497,"name":"thor","grade":33,"course":"hammers"},{"id":498,"name":"Byun","grade":46,"course":"Magic"},{"id":499,"name":"Byun","grade":46,"course":"Magic"},{"id":500,"name":"Byun","grade":46,"course":"Magic"},{"id":501,"name":"Byun","grade":46,"course":"Magic"},{"id":514,"name":"Nicholas","grade":87,"course":"Thrift"},{"id":536,"name":"student","grade":89,"course":"course test"},{"id":539,"name":"Garbage","grade":0,"course":"Smelling"},{"id":545,"name":"POSTED!!!","grade":100,"course":"LFZ"},{"id":546,"name":"testdude","grade":99,"course":"ajaxstuff"},{"id":552,"name":"JJ Watt","grade":0,"course":"Texans"},{"id":556,"name":"Butters Stotch","grade":67,"course":"Tap Dancing Accidents"},{"id":576,"name":"Jason","grade":87,"course":"class1"},{"id":582,"name":"random numbers","grade":49,"course":"like cartman"},{"id":583,"name":"what what","grade":87,"course":"in the butt"},{"id":585,"name":"accept my data","grade":100,"course":"DAMN IT"},{"id":587,"name":"Seymoure Butts","grade":100,"course":"colinoscopy"},{"id":598,"name":"mix","grade":66,"course":"vats"},{"id":599,"name":"Jason","grade":87,"course":"class1"},{"id":620,"name":"testing","grade":99,"course":"timeout"},{"id":621,"name":"one","grade":90,"course":"more"},{"id":659,"name":"This is the","grade":100,"course":"Story that never"},{"id":660,"name":"Ends it goes on","grade":100,"course":"and on my friends"},{"id":661,"name":"some people started","grade":100,"course":"singing it not knowing"},{"id":662,"name":"what it was","grade":100,"course":"and will continue singing"},{"id":663,"name":"it forever just because","grade":100,"course":"...."},{"id":680,"name":"custom snack stadiums","grade":100,"course":"http:\/\/www.moduulis.com"},{"id":714,"name":"Han Solo","grade":23,"course":"Hokie Religions"},{"id":715,"name":"Darth Vadar","grade":100,"course":"Force Choke"},{"id":719,"name":"undefined","grade":76,"course":"Money of Cuteness"},{"id":720,"name":"Ewok","grade":78,"course":"Money of Cuteness"},{"id":729,"name":"Han Solo","grade":12,"course":"Odds"},{"id":738,"name":"big","grade":100,"course":"butts"},{"id":747,"name":"Han Solo","grade":99,"course":"Imperial Flight School"},{"id":760,"name":"fghfghfghfghfghfghfg","grade":67,"course":"ghf"},{"id":761,"name":"wwwwwwwwwwwww","grade":44,"course":"www"},{"id":770,"name":"Anakin Skywalker","grade":62,"course":"Psych Therapy"},{"id":823,"name":"11","grade":33,"course":"22"},{"id":835,"name":"Butters Stotch","grade":54,"course":"Saving ImaginationLand"},{"id":842,"name":"Eric Cartman","grade":84,"course":"Chili cooking"},{"id":847,"name":"Stan Marsh","grade":4,"course":"Eating Cheesy Poofs"}]}
-/*{
-"success": true,
-"data": [{
-"id": 1,
-"name": "Elizabeth",
-"grade": 89,
-"course": "Library Science"
-},
-*/
+<?php
+$output = [];
+$output['success']=true;
+$output['data']=[];
+$output['data'][] = ['id'=>1,'name'=>'Elizabeth','grade'=>89,'course'=>'Library Science'];
 
-//$output = [];
-//$output['success']=true;
-//$output['data']=[];
-//$output['data'][] = ['id'=>1,'name'=>'Elizabeth','grade'=>89,'course'=>'Library Science'];
-//
-//$json_output = json_encode($output);
-//
-//print($json_output);
+$json_output = json_encode($output);
+
+print($json_output);
+?>
