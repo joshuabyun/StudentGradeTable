@@ -59,8 +59,8 @@ function requestEdit(){
     $editedCourse = $_POST['editedCourse'];
     $editedGrade = $_POST['editedGrade'];
     if(!empty($studentId)&&!empty($editedName)&&!empty($editedCourse)&&!empty($editedGrade)){
-        //$query ='UPDATE `students` SET `name`=\''.$editedName.'\',`grade`='.$editedGrade.',`course`=\''.$editedCourse.'\' WHERE `id`='.$studentId;
-        $query ="UPDATE students SET name='$editedName',grade='$editedGrade',course ='$editedCourse' WHERE id=''$studentId";
+        $query ='UPDATE `students` SET `name`=\''.$editedName.'\',`grade`='.$editedGrade.',`course`=\''.$editedCourse.'\' WHERE `id`='.$studentId;
+        //$query ="UPDATE students SET name='$editedName',grade='$editedGrade',course ='$editedCourse' WHERE id=''$studentId";
         mysqli_query($conn,$query);
         if(mysqli_affected_rows($conn) == 1){
             //db updated
