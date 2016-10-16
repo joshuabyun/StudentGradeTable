@@ -135,7 +135,14 @@ function createDefaultInputValObj(clickedEditBtn){ //looks for the parent tr and
     }
     return tdObj;
 }
+function addLoading(){
+    $('<img>').addClass('img-responsive').attr({"src" : "loading.gif"}).appendTo($('.loadingContainer'));
+}
+function removeLoading(){
+    $('.loadingContainer > img').remove();
+}
 function sendSeverRequestToRead(callBack){//read
+    addLoading();
     var callBackFunc = callBack;
     $.ajax({
         url : 'server/get.php',
@@ -155,6 +162,7 @@ function sendSeverRequestToRead(callBack){//read
                 if(callBackFunc != undefined){
                     callBackFunc();
                 }
+                removeLoading();
                 console.log('response',response);
             }else{
                 console.log('response',response);
@@ -167,6 +175,7 @@ function sendSeverRequestToRead(callBack){//read
 }
 function sendServerRequestToAdd(studentObj){
     console.log("sendServerRequestToAdd");
+    addLoading();
     var callBackAfterSuccess = function(){
         $('button:not(.btn-info)').removeClass('disabled');
     };
@@ -183,6 +192,7 @@ function sendServerRequestToAdd(studentObj){
         success:function(response){
             if(response.success){
                 console.log('added response :',response);
+                removeLoading();
                 sendSeverRequestToRead(callBackAfterSuccess);
                 //location.reload();
             }
@@ -190,6 +200,7 @@ function sendServerRequestToAdd(studentObj){
     })
 }
 function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
+    addLoading();
     var callBackAfterSuccess = function(){
         $('button:not(.btn-info)').removeClass('disabled');
     };
@@ -206,6 +217,7 @@ function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
         method:'post',
         success:function(response){
             if(response.success){
+                removeLoading();
                 sendSeverRequestToRead(callBackAfterSuccess);
                 //location.reload();
                 console.log(response);
@@ -216,6 +228,7 @@ function requestServerToEdit(editedName,editedCourse,editedGrade,studentId){
     })
 }
 function requestServerDelete(delBtnElement){
+    addLoading();
     var trIndex = delBtnElement.parents('tr').index();
     var studentId = student_array[trIndex].id;
     console.log("object to delete : ",studentId);
@@ -234,6 +247,7 @@ function requestServerDelete(delBtnElement){
                 calculateAverageAndUpdate();
                 updateStudentListInDom();
                 $('button:not(.btn-info)').removeClass('disabled');
+                removeLoading();
             }
             else{
                 console.log(response);
@@ -251,4 +265,3 @@ function initialize(){
 $(document).ready(function(){
         initialize();
 });
-////////////

@@ -19,7 +19,7 @@
             <small class="pull-right">Grade Average : <span class="avgGrade label label-default">0.00</span></small>
         </h3>
     </div>
-    <div class="student-add-form form-group col-xs-12 col-sm-3 col-sm-push-9">
+    <div class="student-add-form form-group col-xs-12 col-sm-3 col-sm-push-9 container">
         <h4>Add Student</h4>
         <div class="form-group input-group">
             <span class="input-group-addon">
@@ -45,9 +45,8 @@
             <button type="button" class="btn btn-default" id="cancelBtn" onclick = 'cancelClicked()'>Cancel</button>
             <button type="button" class="btn btn-info" id="refreshBtn" onclick = 'refreshBtnClicked()'><span class="glyphicon glyphicon-refresh"></span></button>
         </div>
-        <!--<div class="form-group">-->
-            <!--<button type="button" class="btn btn-warning" id="getDataBtn" onclick = 'getDataBtnClicked()'>Get Data From Server</button>-->
-        <!--</div>-->
+        <div class="loadingContainer col-xs-3 col-sm-12"></div>
+        <!--<img class="img-responsive" src="loading.gif">-->
     </div>
     <div class="student-list-container col-xs-12 col-sm-9 col-sm-pull-3">
         <table class="student-list table">
