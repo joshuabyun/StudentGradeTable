@@ -1,10 +1,9 @@
 <?php
 require_once "mysql_connect.php";
-if(!empty($_POST['requestType'])){
+if(!$_GET){
+    requestRead();
+}else if(!empty($_POST['requestType'])){
     switch ($_POST['requestType']) {
-        case 'read':
-            requestRead();
-        break;
         case 'delete':
             requestDelete();
             break;

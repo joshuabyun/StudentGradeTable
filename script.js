@@ -147,8 +147,8 @@ function sendSeverRequestToRead(callBack){//read
     $.ajax({
         url : 'server/get.php',
         dataType:'json',
-        data:{requestType : 'read'},
-        method:'post',
+        //data:{requestType : 'read'},
+        method:'get',
         success:function(response){
             if(response.success){
                 clearStudentArray();//clear current student_Array
